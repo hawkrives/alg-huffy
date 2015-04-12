@@ -1,10 +1,10 @@
 CXX := g++
-CXXFLAGS := -Wall -g --std=c++11
+CXXFLAGS := -Wall --std=c++11
 
 huffy: huffy.cpp
 
 test: huffy
-	./$<
+	./$< < test.txt
 
 clean:
 	rm -f huffy *.o

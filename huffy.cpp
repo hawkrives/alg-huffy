@@ -49,20 +49,24 @@ ostream& operator<<(ostream& stream,
   return stream;
 }
 
-map<int, int> frequency(vector<int> input) {
-
-}
-
-void encode(vector<int> input) {
+void encode(map<int, int> input) {
 
 }
 
 int main(int argc, char const *argv[]) {
-	int next;
-	vector<int> data;
+	char next;
+	map<int, int> data;
+
 	while (cin >> next) {
-		data.push_back(next);
+		int val = (int)next;
+		if (data.count(val)) {
+			data.at(val)++;
+		}
+		else {
+			data.insert({val, 1});
+		}
 	}
+
 	cout << data << endl;
 	return 0;
 }

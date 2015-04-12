@@ -11,8 +11,6 @@ using std::string;
 using std::vector;
 #include <map>
 using std::map;
-#include <iomanip>
-using std::quoted;
 
 template<typename T>
 ostream& operator<<(ostream& s, const vector<T>& v) {
@@ -31,13 +29,6 @@ void print_item(basic_ostream<CharT, Traits>& stream,
 	const T& item)
 {
   stream << item;
-}
-
-template<typename CharT, typename Traits, typename Alloc>
-void print_item(basic_ostream<CharT, Traits>& stream,
-	const basic_string<CharT, Traits, Alloc>& item)
-{
-  stream << quoted(item);
 }
 
 // A printer for unordered maps

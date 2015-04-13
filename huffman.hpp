@@ -78,7 +78,7 @@ int in_tree(const Node* looking_for, const vector<Node*> nodes, int skip_index =
 	return -1;
 }
 
-void explore(const Node* start, vector<int> &path, set<pair<vector<int>, int>> &visited, const int depth = 0) {
+void explore(const Node* start, vector<bool> &path, set<pair<vector<bool>, int>> &visited, const int depth = 0) {
 	// cerr << string(depth * 2, ' ') << start << endl;
 
 	if (start->left_child == nullptr && start->right_child == nullptr) {
@@ -142,8 +142,8 @@ void encode(map<int, int> freqs, const vector<int> input) {
 	Node* head = build_tree(queue);
 
 	// explore
-	vector<int> path;
-	set<pair<vector<int>, int>> visited;
+	vector<bool> path;
+	set<pair<vector<bool>, int>> visited;
 	explore(head, path, visited);
 
 	// encode

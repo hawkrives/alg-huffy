@@ -6,7 +6,6 @@ using std::cerr;
 using std::endl;
 using std::ostream;
 using std::string;
-using std::to_string;
 #include <vector>
 using std::vector;
 #include <map>
@@ -20,6 +19,7 @@ using std::pair;
 using std::make_pair;
 
 #include "ostream.hpp"
+#include "join.hpp"
 
 struct freq_pair {
 	int value = -1;
@@ -165,14 +165,6 @@ Node* build_tree(vector<Node*> &queue) {
 	return nodes.back();
 }
 
-template<typename T>
-string join(string sep, vector<T> coll) {
-	string str;
-	for (auto item : coll)
-		str += to_string(item) + sep;
-	return str;
-}
-
 void encode(map<int, int> freqs, const vector<int> input) {
 	// prepare
 	vector<Node*> queue;
@@ -203,9 +195,8 @@ void encode(map<int, int> freqs, const vector<int> input) {
 }
 
 void decode(string input, const map<string, int> codes) {
-	while (input.size()) {
-
-	}
+	cout << input << endl;
+	cout << codes << endl;
 }
 
 #endif // _HUFFY_AND_PUFFY_

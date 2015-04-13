@@ -15,7 +15,12 @@ test: encode decode
 	./decode < test.out > out.txt
 	diff test.txt out.txt
 
+big: encode decode
+	./encode < words > words.huffman
+	./decode < words.huffmann > words.decoded
+	diff words words.decoded
+
 clean:
 	rm -f encode decode *.o
 
-.PHONY: clean test
+.PHONY: clean test big

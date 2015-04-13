@@ -11,13 +11,15 @@ huffman.hpp: split.hpp join.hpp ostream.hpp
 	@echo
 
 test: encode decode
-	./encode < test.txt > test.out
-	./decode < test.out > out.txt
-	diff test.txt out.txt
+	time ./encode < test.txt > test.huffman
+	time ./decode < test.huffman > out.decoded
+	diff test.txt out.decoded
+	cat test.txt
+	cat out.decoded
 
 big: encode decode
-	./encode < words > words.huffman
-	./decode < words.huffman > words.decoded
+	time ./encode < words > words.huffman
+	time ./decode < words.huffman > words.decoded
 	diff words words.decoded
 
 clean:

@@ -72,13 +72,13 @@ ostream& operator<<(ostream& s, const Node* n) {
 }
 
 int in_tree(const Node* looking_for, const vector<Node*> nodes, int skip_index = 0) {
-	for (int i = 0; i < nodes.size(); i++)
+	for (size_t i = 0; i < nodes.size(); i++)
 		if (i != skip_index && nodes.at(i) == looking_for)
 			return i;
 	return -1;
 }
 
-void explore(const Node* start, vector<int> &path, set<pair<vector<int>, int>> &visited, int depth = 0) {
+void explore(const Node* start, vector<int> &path, set<pair<vector<int>, int>> &visited, const int depth = 0) {
 	// cerr << string(depth * 2, ' ') << start << endl;
 
 	if (start->left_child == nullptr && start->right_child == nullptr) {
@@ -109,57 +109,26 @@ Node* build_tree(vector<Node*> &queue) {
 		Node* next_bottom = queue.front();
 		queue.erase(queue.begin());
 
-		int bottom_index = in_tree(bottom, nodes);
-		int next_bottom_index = in_tree(next_bottom, nodes, bottom_index);
+		const int bottom_index = in_tree(bottom, nodes);
+		const int next_bottom_index = in_tree(next_bottom, nodes, bottom_index);
 
-		if (bottom_index < 0 && next_bottom_index < 0) {
-			// if neither of the two lowest nodes are in the tree
-			Node *parent = new Node();
-			parent->data.frequency = bottom->data.frequency + next_bottom->data.frequency;
-			parent->data.value = -1;
-			parent->left_child = bottom;
-			parent->right_child = next_bottom;
-			queue.push_back(parent);
+		// We have four cases:
+		// - neither of the two lowest nodes are in the tree
+		// - only the second-lowest frequency node is in the tree
+		// - only the lowest frequency node is in the tree
+		// - both are in the tree
+		Node *parent = new Node();
+		parent->data.frequency = bottom->data.frequency + next_bottom->data.frequency;
+		parent->left_child  = bottom_index >= 0      ? nodes.at(bottom_index)      : bottom;
+		parent->right_child = next_bottom_index >= 0 ? nodes.at(next_bottom_index) : next_bottom;
 
-			nodes.push_back(parent);
-		}
-		else if (bottom_index < 0 && next_bottom_index >= 0) {
-			// if only the second-lowest frequency node is in the tree
-			Node *parent = new Node();
-			parent->data.frequency = bottom->data.frequency + next_bottom->data.frequency;
-			parent->data.value = -1;
-			parent->left_child = bottom;
-			parent->right_child = nodes.at(next_bottom_index);
-			queue.push_back(parent);
+		nodes.push_back(parent);
+		queue.push_back(parent);
 
-			nodes.push_back(parent);
-			nodes.erase(nodes.begin() + next_bottom_index);
-		}
-		else if (bottom_index >= 0 && next_bottom_index < 0) {
-			// if only the lowest frequency node is in the tree
-			Node *parent = new Node();
-			parent->data.frequency = bottom->data.frequency + next_bottom->data.frequency;
-			parent->data.value = -1;
-			parent->left_child = nodes.at(bottom_index);
-			parent->right_child = next_bottom;
-			queue.push_back(parent);
-
-			nodes.push_back(parent);
+		if (bottom_index >= 0)
 			nodes.erase(nodes.begin() + bottom_index);
-		}
-		else {
-			// if both are in the tree
-			Node *parent = new Node();
-			parent->data.frequency = bottom->data.frequency + next_bottom->data.frequency;
-			parent->data.value = -1;
-			parent->left_child = nodes.at(bottom_index);
-			parent->right_child = nodes.at(next_bottom_index);
-			queue.push_back(parent);
-
-			nodes.push_back(parent);
-			nodes.erase(nodes.begin() + bottom_index);
+		if (next_bottom_index >= 0)
 			nodes.erase(nodes.begin() + next_bottom_index);
-		}
 	}
 
 	return nodes.back();
@@ -180,7 +149,7 @@ void encode(map<int, int> freqs, const vector<int> input) {
 	// encode
 	map<string, int> codes;
 	map<int, string> reversed_codes;
-	for (auto item : visited) {
+	for (const auto item : visited) {
 		codes.insert({join("", item.first), item.second});
 		reversed_codes.insert({item.second, join("", item.first)});
 	}
@@ -197,14 +166,14 @@ void encode(map<int, int> freqs, const vector<int> input) {
 void decode(string input, const map<string, int> codes) {
 	string output;
 	string to_check = "";
-	for (auto inp : input) {
+	for (const auto inp : input) {
 		to_check += inp;
-		for (auto code : codes) {
+		for (const auto code : codes) {
 			if (to_check == code.first) {
 				output += code.second;
 				to_check.clear();
 			}
-		}		
+		}
 	}
 	cout << output;
 }

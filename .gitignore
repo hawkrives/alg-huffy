@@ -28,6 +28,8 @@
 *.app
 
 #
-*.dYSM/*
 encode
 decode
+*.out
+*.decoded
+*.huffman

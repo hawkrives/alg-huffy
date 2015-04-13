@@ -18,6 +18,8 @@ using std::set;
 using std::pair;
 using std::make_pair;
 
+#include "ostream.hpp"
+
 struct freq_pair {
 	int value = -1;
 	int frequency = 0;
@@ -47,6 +49,7 @@ struct Node {
 	Node() {};
 	Node(int freq, int val) : data({freq, val}) {};
 	Node(freq_pair initial) : data(initial) {};
+	Node(pair<int, int> initial) : data(initial) {};
 };
 
 ostream& operator<<(ostream& s, const Node& n) {
@@ -75,7 +78,7 @@ int in_tree(const Node* looking_for, const vector<Node*> nodes, int skip_index =
 }
 
 void explore(const Node* start, vector<bool> &path, set<vector<bool>> &visited, int depth = 0) {
-	cerr << string(depth * 2, ' ') << start << endl;
+	// cerr << string(depth * 2, ' ') << start << endl;
 
 	if (start->left_child == nullptr && start->right_child == nullptr) {
 		visited.insert(path);
@@ -93,7 +96,7 @@ void explore(const Node* start, vector<bool> &path, set<vector<bool>> &visited, 
 	}
 }
 
-vector<Node*> encode(vector<freq_pair> freqs, const vector<int> input) {
+void encode(map<int, int> freqs, const vector<int> input) {
 	vector<Node*> queue;
 	for (auto freq : freqs) {
 		queue.push_back(new Node(freq));
@@ -163,11 +166,14 @@ vector<Node*> encode(vector<freq_pair> freqs, const vector<int> input) {
 		}
 	}
 
+	Node* head = nodes.back();
+
 	vector<bool> path;
 	set<vector<bool>> visited;
-	explore(nodes.back(), path, visited);
+	explore(head, path, visited);
 
-	return nodes;
+	cout << freqs << endl;
+	cout << visited << endl;
 }
 
 #endif // _HUFFY_AND_PUFFY_

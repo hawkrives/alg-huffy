@@ -1,12 +1,16 @@
 CXX := g++
 CXXFLAGS := -Wall --std=c++11 -Wno-missing-braces
 
-huffy: huffy.cpp
+encode: encode.cpp huffman.hpp ostream.hpp
+	$(CXX) $(CXXFLAGS) -o $@ $<
 
-test: huffy
+decode: decode.cpp huffman.hpp ostream.hpp
+	$(CXX) $(CXXFLAGS) -o $@ $<
+
+test: encode
 	./$< < test.txt
 
 clean:
-	rm -f huffy *.o
+	rm -f encode decode *.o
 
 .PHONY: clean test

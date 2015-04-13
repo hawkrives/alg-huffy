@@ -7,6 +7,8 @@ using std::basic_ostream;
 using std::ostream;
 using std::basic_string;
 using std::string;
+#include <fstream>
+using std::ifstream;
 #include <vector>
 using std::vector;
 #include <unordered_map>
@@ -18,7 +20,6 @@ using std::array;
 #include <utility>
 using std::pair;
 using std::make_pair;
-using std::bitset;
 #include <algorithm>
 using std::sort;
 using std::stable_sort;
@@ -33,35 +34,35 @@ ostream& operator<<(ostream& s, const pair<T, T>& v) {
 
 template<typename T>
 ostream& operator<<(ostream& s, const vector<T>& v) {
-    s.put('[');
-    char comma[3] = {'\0', ' ', '\0'};
-    for (const auto& e : v) {
-        s << comma << e;
-        comma[0] = ',';
-    }
-    return s << ']';
+	s.put('[');
+	char comma[3] = {'\0', ' ', '\0'};
+	for (const auto& e : v) {
+		s << comma << e;
+		comma[0] = ',';
+	}
+	return s << ']';
 }
 
 template<typename T>
 ostream& operator<<(ostream& s, const set<T>& v) {
-    s.put('[');
-    char comma[3] = {'\0', ' ', '\0'};
-    for (const auto& e : v) {
-        s << comma << e;
-        comma[0] = ',';
-    }
-    return s << ']';
+	s.put('[');
+	char comma[3] = {'\0', ' ', '\0'};
+	for (const auto& e : v) {
+		s << comma << e;
+		comma[0] = ',';
+	}
+	return s << ']';
 }
 
 template<typename T, size_t N>
 ostream& operator<<(ostream& s, const array<T, N>& v) {
-    s.put('[');
-    char comma[3] = {'\0', ' ', '\0'};
-    for (const auto& e : v) {
-        s << comma << e;
-        comma[0] = ',';
-    }
-    return s << ']';
+	s.put('[');
+	char comma[3] = {'\0', ' ', '\0'};
+	for (const auto& e : v) {
+		s << comma << e;
+		comma[0] = ',';
+	}
+	return s << ']';
 }
 
 // helper function templates for printing each element
@@ -70,7 +71,7 @@ void print_item(basic_ostream<CharT, Traits>& stream, const T& item) {
 	stream << item;
 }
 
-// A printer for unordered maps
+// A printer for maps
 template<typename Key, typename T, typename Compare, typename Allocator>
 ostream& operator<<(ostream& stream, const map<Key, T, Compare, Allocator>& map) {
 	stream << '{';
@@ -97,65 +98,56 @@ struct freq_pair {
 
 	bool operator== (const freq_pair &rhs) const {
 		return value == rhs.value && frequency == rhs.frequency;
-		// return this == &rhs;
 	}
 };
-
-freq_pair operator+ (const freq_pair &lhs, const freq_pair &rhs) {
-	freq_pair x;
-	// x.value = lhs.value + rhs.value;
-	x.frequency = lhs.frequency + rhs.frequency;
-	return x;
-}
 
 ostream& operator<<(ostream& s, const freq_pair& v) {
 	s << "(" << v.value << ", " << v.frequency << ")";
 	return s;
 }
 
-typedef pair<int, int> pair_int;
-typedef vector<pair_int> v_pair_int;
-
 struct Node {
 	Node* left_child = nullptr;
 	Node* right_child = nullptr;
 	freq_pair data = make_pair(-1, 0);
+
+	bool operator== (const Node &rhs) const {
+		return left_child == rhs.left_child && right_child == rhs.right_child && data == rhs.data;
+	}
 
 	Node() {};
 	Node(int freq, int val) : data({freq, val}) {};
 	Node(freq_pair initial) : data(initial) {};
 };
 
-// ostream& operator<<(ostream& s, const Node& v) {
-// 	s << "{";
-// 	s << "key: " << v.data.value << ", ";
-// 	s << "frequency: " << v.data.frequency << ", ";
-// 	s << "left: " << (*v.left_child).data.value << ", ";
-// 	s << "right: " << (*v.right_child).data.value;
-// 	return s << "}";
-// }
+ostream& operator<<(ostream& s, const Node& n) {
+ 	s << "{data: " << n.data << ", ";
+	s << "left: ";
+	if (n.left_child != nullptr)
+		s << n.left_child->data;
+	else
+		s << "null";
+	s << ", right: ";
+	if (n.right_child != nullptr)
+		s << n.right_child->data;
+	else
+		s << "null";
+ 	return s << "}";
+ }
 
-ostream& operator<<(ostream& s, const Node* v) {
-	s << "{";
-	s << "(" << v->data.value << ",";
-	s << v->data.frequency << "), ";
-	if (v->left_child != nullptr)
-		s << "<: " << v->left_child->data << " " << &v->left_child->data << ", ";
-	if (v->right_child != nullptr)
-		s << ">: " << v->right_child->data << " " << &v->right_child->data << ", ";
-	return s << "}";
+ostream& operator<<(ostream& s, const Node* n) {
+	return s << *n;
 }
 
-int is_in_tree(const freq_pair looking_for, const vector<Node*> nodes, int skip_index = 0) {
+int in_tree(const Node* looking_for, const vector<Node*> nodes, int skip_index = 0) {
 	for (int i = 0; i < nodes.size(); i++)
-		if (i != skip_index)
-			if (nodes.at(i)->data == looking_for)
-				return i;
+		if (i != skip_index && nodes.at(i) == looking_for)
+			return i;
 	return -1;
 }
 
 void explore(const Node* start, vector<bool> &path, set<vector<bool>> &visited, int depth = 0) {
-	cout << string(depth * 2, ' ') << start << endl;
+	cerr << string(depth * 2, ' ') << start << endl;
 
 	if (start->left_child == nullptr && start->right_child == nullptr) {
 		visited.insert(path);
@@ -174,97 +166,81 @@ void explore(const Node* start, vector<bool> &path, set<vector<bool>> &visited, 
 }
 
 vector<Node*> encode(vector<freq_pair> freqs, const vector<int> input) {
-	stable_sort(freqs.begin(), freqs.end(), [](const freq_pair a, const freq_pair b) {
-		return a.frequency > b.frequency;
-	});
+	vector<Node*> queue;
+	for (auto freq : freqs) {
+		queue.push_back(new Node(freq));
+	}
 
 	vector<Node*> nodes;
-	while (freqs.size() >= 2) {
-		cout << "1 " << freqs << endl;
-		cout << "1 " << nodes << endl;
+	while (queue.size() >= 2) {
+		stable_sort(queue.begin(), queue.end(), [](const Node* a, const Node* b) {
+			return a->data.frequency < b->data.frequency;
+		});
 
-		freq_pair bottom = freqs.back();
-		freqs.pop_back();
-		freq_pair next_bottom = freqs.back();
-		freqs.pop_back();
+		Node* bottom = queue.front();
+		queue.erase(queue.begin());
+		Node* next_bottom = queue.front();
+		queue.erase(queue.begin());
 
-		// cout << "2 " << freqs << endl;
-		// cout << "2 " << nodes << endl;
+		int bottom_index = in_tree(bottom, nodes);
+		int next_bottom_index = in_tree(next_bottom, nodes, bottom_index);
 
-		int bottom_index = is_in_tree(bottom, nodes);
-		int next_bottom_index = is_in_tree(next_bottom, nodes, bottom_index);
 		if (bottom_index < 0 && next_bottom_index < 0) {
 			// if neither of the two lowest nodes are in the tree
 			Node *parent = new Node();
-			parent->data.frequency = bottom.frequency + next_bottom.frequency;
+			parent->data.frequency = bottom->data.frequency + next_bottom->data.frequency;
 			parent->data.value = -1;
-			parent->left_child = new Node(bottom);
-			parent->right_child = new Node(next_bottom);
-			freqs.push_back(parent->data);
+			parent->left_child = bottom;
+			parent->right_child = next_bottom;
+			queue.push_back(parent);
 
-			nodes.push_back(parent->left_child);
-			nodes.push_back(parent->right_child);
 			nodes.push_back(parent);
 		}
 		else if (bottom_index < 0 && next_bottom_index >= 0) {
 			// if only the second-lowest frequency node is in the tree
 			Node *parent = new Node();
-			parent->data.frequency = bottom.frequency + next_bottom.frequency;
+			parent->data.frequency = bottom->data.frequency + next_bottom->data.frequency;
 			parent->data.value = -1;
-			parent->left_child = new Node(bottom);
+			parent->left_child = bottom;
 			parent->right_child = nodes.at(next_bottom_index);
-			freqs.push_back(parent->data);
+			queue.push_back(parent);
 
-			nodes.push_back(parent->left_child);
 			nodes.push_back(parent);
+			nodes.erase(nodes.begin() + next_bottom_index);
 		}
 		else if (bottom_index >= 0 && next_bottom_index < 0) {
 			// if only the lowest frequency node is in the tree
 			Node *parent = new Node();
-			parent->data.frequency = bottom.frequency + next_bottom.frequency;
+			parent->data.frequency = bottom->data.frequency + next_bottom->data.frequency;
 			parent->data.value = -1;
 			parent->left_child = nodes.at(bottom_index);
-			parent->right_child = new Node(next_bottom);
-			freqs.push_back(parent->data);
+			parent->right_child = next_bottom;
+			queue.push_back(parent);
 
-			nodes.push_back(parent->right_child);
 			nodes.push_back(parent);
+			nodes.erase(nodes.begin() + bottom_index);
 		}
 		else {
 			// if both are in the tree
 			Node *parent = new Node();
-			parent->data.frequency = bottom.frequency + next_bottom.frequency;
+			parent->data.frequency = bottom->data.frequency + next_bottom->data.frequency;
 			parent->data.value = -1;
 			parent->left_child = nodes.at(bottom_index);
 			parent->right_child = nodes.at(next_bottom_index);
-			freqs.push_back(parent->data);
+			queue.push_back(parent);
 
 			nodes.push_back(parent);
+			nodes.erase(nodes.begin() + bottom_index);
+			nodes.erase(nodes.begin() + next_bottom_index);
 		}
-
-		cout << "3 " << freqs << endl;
-		cout << "3 " << nodes << endl;
-
-		stable_sort(freqs.begin(), freqs.end(), [](const freq_pair a, const freq_pair b) {
-			return a.frequency > b.frequency;
-		});
-
-		cout << "4 " << freqs << endl;
-		cout << "4 " << nodes << endl;
-		cout << endl;
-
-		// cout << nodes << endl;
 	}
 
 	vector<bool> path;
 	set<vector<bool>> visited;
 	explore(nodes.back(), path, visited);
 
-	cout << visited << endl;
-
 	return nodes;
 }
-
 
 vector<freq_pair> map_to_pairs(const map<int, int> &m) {
 	vector<freq_pair> vec;

@@ -18,9 +18,9 @@ test: encode decode
 	cat out.decoded
 
 big: encode decode
-	time ./encode < words > words.huffman
+	time ./encode < words.txt > words.huffman
 	time ./decode < words.huffman > words.decoded
-	diff words words.decoded
+	diff words.txt words.decoded
 
 clean:
 	rm -f encode decode *.o

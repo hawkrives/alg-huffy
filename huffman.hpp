@@ -195,8 +195,18 @@ void encode(map<int, int> freqs, const vector<int> input) {
 }
 
 void decode(string input, const map<string, int> codes) {
-	cout << input << endl;
-	cout << codes << endl;
+	string output;
+	string to_check = "";
+	for (int i = 0; i < input.size(); i++) {
+		to_check += input[i];
+		for (auto code : codes) {
+			if (to_check == code.first) {
+				output += code.second;
+				to_check.clear();
+			}
+		}		
+	}
+	cout << output;
 }
 
 #endif // _HUFFY_AND_PUFFY_

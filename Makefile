@@ -17,7 +17,7 @@ test: encode decode
 
 big: encode decode
 	./encode < words > words.huffman
-	./decode < words.huffmann > words.decoded
+	./decode < words.huffman > words.decoded
 	diff words words.decoded
 
 clean:

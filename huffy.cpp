@@ -121,17 +121,16 @@ struct Node {
 };
 
 ostream& operator<<(ostream& s, const Node& n) {
- 	s << "{data: " << n.data << ", ";
-	s << "left: ";
-	if (n.left_child != nullptr)
+ 	s << "{";
+ 	s << "data: " << n.data;
+	if (n.left_child != nullptr) {
+		s << ", left: ";
 		s << n.left_child->data;
-	else
-		s << "null";
-	s << ", right: ";
-	if (n.right_child != nullptr)
+	}
+	if (n.right_child != nullptr) {
+		s << ", right: ";
 		s << n.right_child->data;
-	else
-		s << "null";
+	}
  	return s << "}";
  }
 

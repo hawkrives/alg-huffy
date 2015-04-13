@@ -12,10 +12,10 @@ huffman.hpp: split.hpp join.hpp ostream.hpp
 
 test: encode decode
 	time ./encode < test.txt > test.huffman
-	time ./decode < test.huffman > out.decoded
-	diff test.txt out.decoded
+	time ./decode < test.huffman > test.decoded
+	diff test.txt test.decoded
 	cat test.txt
-	cat out.decoded
+	cat test.decoded
 
 big: encode decode
 	time ./encode < words.txt > words.huffman
@@ -23,6 +23,6 @@ big: encode decode
 	diff words.txt words.decoded
 
 clean:
-	rm -f encode decode *.o
+	rm -f encode decode *.o *.decoded *.huffman *.out
 
 .PHONY: clean test big

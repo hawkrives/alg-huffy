@@ -6,6 +6,7 @@ using std::cerr;
 using std::endl;
 using std::ostream;
 using std::string;
+using std::to_string;
 #include <vector>
 using std::vector;
 #include <map>
@@ -77,11 +78,11 @@ int in_tree(const Node* looking_for, const vector<Node*> nodes, int skip_index =
 	return -1;
 }
 
-void explore(const Node* start, vector<bool> &path, set<vector<bool>> &visited, int depth = 0) {
+void explore(const Node* start, vector<int> &path, set<pair<vector<int>, int>> &visited, int depth = 0) {
 	// cerr << string(depth * 2, ' ') << start << endl;
 
 	if (start->left_child == nullptr && start->right_child == nullptr) {
-		visited.insert(path);
+		visited.insert({path, start->data.value});
 	}
 
 	if (start->left_child != nullptr) {
@@ -96,12 +97,7 @@ void explore(const Node* start, vector<bool> &path, set<vector<bool>> &visited, 
 	}
 }
 
-void encode(map<int, int> freqs, const vector<int> input) {
-	vector<Node*> queue;
-	for (auto freq : freqs) {
-		queue.push_back(new Node(freq));
-	}
-
+Node* build_tree(vector<Node*> &queue) {
 	vector<Node*> nodes;
 	while (queue.size() >= 2) {
 		stable_sort(queue.begin(), queue.end(), [](const Node* a, const Node* b) {
@@ -166,14 +162,50 @@ void encode(map<int, int> freqs, const vector<int> input) {
 		}
 	}
 
-	Node* head = nodes.back();
+	return nodes.back();
+}
 
-	vector<bool> path;
-	set<vector<bool>> visited;
+template<typename T>
+string join(string sep, vector<T> coll) {
+	string str;
+	for (auto item : coll)
+		str += to_string(item) + sep;
+	return str;
+}
+
+void encode(map<int, int> freqs, const vector<int> input) {
+	// prepare
+	vector<Node*> queue;
+	for (auto freq : freqs)
+		queue.push_back(new Node(freq));
+	Node* head = build_tree(queue);
+
+	// explore
+	vector<int> path;
+	set<pair<vector<int>, int>> visited;
 	explore(head, path, visited);
 
-	cout << freqs << endl;
-	cout << visited << endl;
+	// encode
+	map<string, int> codes;
+	map<int, string> reversed_codes;
+	for (auto item : visited) {
+		codes.insert({join("", item.first), item.second});
+		reversed_codes.insert({item.second, join("", item.first)});
+	}
+	char comma[3] = {'\0', ' ', '\0'};
+	for (const auto pair : codes) {
+		cout << comma << pair.first << ":" << pair.second;
+		comma[0] = ',';
+	}
+	cout << endl;
+	for (const auto item : input)
+		cout << reversed_codes[item];
+}
+
+void decode(string input, const map<string, int> codes) {
+	while (input.size()) {
+
+	}
 }
 
 #endif // _HUFFY_AND_PUFFY_

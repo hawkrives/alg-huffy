@@ -15,10 +15,15 @@ using std::map;
 using std::set;
 
 template<typename T>
-ostream& operator<<(ostream& s, const pair<T, T>& v) {
-	s << "(" << v.first << ", " << v.second << ")";
-	return s;
-}
+ostream& operator<<(ostream& s, const vector<T>& v);
+template<typename T>
+ostream& operator<<(ostream& s, const pair<T, T>& v);
+template<typename T, typename U>
+ostream& operator<<(ostream& s, const pair<T, U>& v);
+template<typename T>
+ostream& operator<<(ostream& s, const set<T>& v);
+template<typename Key, typename T, typename Compare, typename Allocator>
+ostream& operator<<(ostream& stream, const map<Key, T, Compare, Allocator>& map);
 
 template<typename T>
 ostream& operator<<(ostream& s, const vector<T>& v) {
@@ -29,6 +34,18 @@ ostream& operator<<(ostream& s, const vector<T>& v) {
 		comma[0] = ',';
 	}
 	return s << ']';
+}
+
+template<typename T>
+ostream& operator<<(ostream& s, const pair<T, T>& v) {
+	s << "(" << v.first << ", " << v.second << ")";
+	return s;
+}
+
+template<typename T, typename U>
+ostream& operator<<(ostream& s, const pair<T, U>& v) {
+	s << "(" << v.first << ", " << v.second << ")";
+	return s;
 }
 
 template<typename T>

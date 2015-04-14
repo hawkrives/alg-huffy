@@ -20,12 +20,10 @@ int main(int argc, char const *argv[]) {
 	while (cin.get(next)) {
 		int val = (int)next;
 		input_data.push_back(val);
-		if (frequency_data.count(val)) {
+		if (frequency_data.count(val))
 			frequency_data.at(val)++;
-		}
-		else {
+		else
 			frequency_data.insert({val, 1});
-		}
 	}
 
 	encode(frequency_data, input_data);
